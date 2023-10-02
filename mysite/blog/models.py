@@ -1,20 +1,24 @@
 from django.db import models
+from django.db.models.query import QuerySet
 from django.utils import timezone
 from django.contrib.auth.models import User
 
 # Create your models here.
 
-
+class PublishedManager(models.Manager):
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset().filter(status="PB")
 
 
 class Post(models.Model):
     
     class Status(models.TextChoices):
         DRAFT = "DF","Draft"
-        
         PUBLISHED = "PB","Published"
         
     
+    objects = models.Manager()
+    published = PublishedManager()
     
     title = models.CharField(max_length=250)
     slug = models.SlugField(max_length=250)
